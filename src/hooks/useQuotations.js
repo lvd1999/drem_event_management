@@ -121,3 +121,27 @@ export function useDeleteQuotationItem(eventId, quotationId) {
     onError: () => toast.error('Failed to delete item.'),
   })
 }
+
+export function useResyncQuotationItems(eventId, quotationId) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (eventItems) => {
+      // Delete all existing quotation items
+      const existing = await getDocs(quotItemsCol(quotationId))
+      await Promise.all(existing.docs.map(d => deleteDoc(d.ref)))
+      // Add current event items
+      for (let i = 0; i < eventItems.length; i++) {
+        const item = eventItems[i]
+        await addDoc(quotItemsCol(quotationId), {
+          description: item.description,
+          quantity: item.quantity ?? 1,
+          unitPrice: item.unitPrice ?? 0,
+          totalPrice: (item.quantity ?? 1) * (item.unitPrice ?? 0),
+          sortOrder: i,
+        })
+      }
+    },
+    onSuccess: () => { qc.invalidateQueries(['quotations', 'byEvent', eventId]); toast.success('Quotation synced with latest items.') },
+    onError: () => toast.error('Failed to sync quotation items.'),
+  })
+}

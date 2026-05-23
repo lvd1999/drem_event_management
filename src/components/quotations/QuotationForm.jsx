@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuotation, useGenerateQuotation, useUpdateQuotation, useCreateQuotationItem, useUpdateQuotationItem, useDeleteQuotationItem } from '@/hooks/useQuotations'
+import { useQuotation, useGenerateQuotation, useUpdateQuotation, useCreateQuotationItem, useUpdateQuotationItem, useDeleteQuotationItem, useResyncQuotationItems } from '@/hooks/useQuotations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,8 +8,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import QuotationLineItem from './QuotationLineItem'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
+import ConfirmDialog from '@/components/common/ConfirmDialog'
 import { formatRM } from '@/lib/utils'
-import { Plus, Printer } from 'lucide-react'
+import { Plus, Printer, RefreshCw } from 'lucide-react'
 import { QUOTATION_STATUSES } from '@/lib/constants'
 
 export default function QuotationForm({ eventId, eventItems }) {
@@ -20,8 +21,10 @@ export default function QuotationForm({ eventId, eventItems }) {
   const updateItem = useUpdateQuotationItem(eventId, quotation?.id)
   const deleteItem = useDeleteQuotationItem(eventId, quotation?.id)
 
+  const resync = useResyncQuotationItems(eventId, quotation?.id)
   const [discount, setDiscount] = useState('')
   const [deposit, setDeposit] = useState('')
+  const [syncConfirmOpen, setSyncConfirmOpen] = useState(false)
 
   if (isLoading) return <LoadingSpinner />
 
@@ -71,11 +74,16 @@ export default function QuotationForm({ eventId, eventItems }) {
             </Select>
           </div>
         </div>
-        <Button asChild size="sm" variant="outline">
-          <Link to={`/events/${eventId}/quotation/${quotation.id}/print`} target="_blank">
-            <Printer size={14} className="mr-1.5" /> Print / PDF
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setSyncConfirmOpen(true)} disabled={resync.isPending}>
+            <RefreshCw size={14} className="mr-1.5" /> Sync from Items
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link to={`/events/${eventId}/quotation/${quotation.id}/print`} target="_blank">
+              <Printer size={14} className="mr-1.5" /> Print / PDF
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Line items */}
@@ -159,6 +167,15 @@ export default function QuotationForm({ eventId, eventItems }) {
           onBlur={e => updateQuot.mutate({ id: quotation.id, notes: e.target.value })}
         />
       </div>
+
+      <ConfirmDialog
+        open={syncConfirmOpen}
+        onOpenChange={setSyncConfirmOpen}
+        title="Sync quotation from event items?"
+        description="This will replace all current quotation line items with the latest event items. Your discount, deposit, and notes will be kept."
+        loading={resync.isPending}
+        onConfirm={() => resync.mutate(eventItems ?? [], { onSuccess: () => setSyncConfirmOpen(false) })}
+      />
     </div>
   )
 }
