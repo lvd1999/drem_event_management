@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { doc, getDoc, collection, getDocs, orderBy, query } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { useSettings } from '@/hooks/useSettings'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRM, formatDate } from '@/lib/utils'
@@ -9,6 +10,8 @@ import { Printer } from 'lucide-react'
 
 export default function QuotationPrintPage() {
   const { eventId, quotationId } = useParams()
+
+  const { data: settings } = useSettings()
 
   const { data, isLoading } = useQuery({
     queryKey: ['print', quotationId],
@@ -52,12 +55,13 @@ export default function QuotationPrintPage() {
         {/* Letterhead */}
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dokoh Ratna</h1>
-            <p className="text-xs text-gray-500 mt-0.5">Weddings &amp; Events</p>
-            <p className="text-xs text-gray-500">patmagictrick@gmail.com</p>
+            <h1 className="text-2xl font-bold text-gray-900">{settings?.companyName}</h1>
+            {settings?.tagline && <p className="text-xs text-gray-500 mt-0.5">{settings.tagline}</p>}
+            {settings?.email  && <p className="text-xs text-gray-500">{settings.email}</p>}
+            {settings?.phone  && <p className="text-xs text-gray-500">{settings.phone}</p>}
           </div>
           <div className="text-right">
-            <p className="text-lg font-semibold text-gray-900">QUOTATION</p>
+            <p className="text-lg font-semibold text-gray-900">{settings?.documentTitle}</p>
             <p className="text-xs text-gray-500 mt-0.5">{quotation.quotationNo}</p>
             <p className="text-xs text-gray-500">Issued: {formatDate(quotation.issuedDate)}</p>
             {quotation.validUntil && (
@@ -140,19 +144,22 @@ export default function QuotationPrintPage() {
         )}
 
         {/* Terms */}
-        <div className="border-t border-gray-200 pt-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Terms &amp; Conditions</p>
-          <ul className="text-xs text-gray-500 space-y-0.5 list-disc list-inside">
-            <li>50% deposit required to confirm booking.</li>
-            <li>Balance to be paid 7 days before the event date.</li>
-            <li>This quotation is valid for 14 days from the issued date.</li>
-            <li>All prices are inclusive of applicable taxes.</li>
-          </ul>
-        </div>
+        {settings?.termsText && (
+          <div className="border-t border-gray-200 pt-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Terms &amp; Conditions</p>
+            <ul className="text-xs text-gray-500 space-y-0.5 list-disc list-inside">
+              {settings.termsText.split('\n').filter(Boolean).map((line, i) => (
+                <li key={i}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        <div className="mt-10 text-center text-xs text-gray-400">
-          Thank you for choosing Dokoh Ratna. We look forward to making your event a success.
-        </div>
+        {settings?.footerText && (
+          <div className="mt-10 text-center text-xs text-gray-400">
+            {settings.footerText}
+          </div>
+        )}
       </div>
     </>
   )

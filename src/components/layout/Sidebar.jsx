@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, ShoppingBag, CalendarDays } from 'lucide-react'
+import { LayoutDashboard, Users, ShoppingBag, CalendarDays, Settings } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
 
@@ -41,6 +41,23 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      {/* Settings link */}
+      <div className="px-3 pb-2">
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            cn(
+              'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+              isActive
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            )
+          }
+        >
+          <Settings size={16} /> Settings
+        </NavLink>
+      </div>
 
       {/* User info */}
       <div className="px-4 py-4 border-t border-border">

@@ -12,6 +12,7 @@ import VendorsPage from '@/pages/vendors/VendorsPage'
 import EventsPage from '@/pages/events/EventsPage'
 import EventDetailPage from '@/pages/events/EventDetailPage'
 import QuotationPrintPage from '@/pages/quotations/QuotationPrintPage'
+import SettingsPage from '@/pages/settings/SettingsPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } })
@@ -33,6 +34,7 @@ export default function App() {
                 <Route path="/vendors"     element={<VendorsPage />} />
                 <Route path="/events"      element={<EventsPage />} />
                 <Route path="/events/:id"  element={<EventDetailPage />} />
+                <Route path="/settings"    element={<SettingsPage />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFoundPage />} />
