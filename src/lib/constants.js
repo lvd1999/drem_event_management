@@ -8,6 +8,7 @@ export const VENDOR_CATEGORIES = [
   'MC',
   'Wardrobe',
   'Makeup',
+  'Event Management (in-house)',
   'Others',
 ]
 
@@ -34,6 +35,7 @@ export const CATEGORY_COLORS = {
   'Sound & Lighting': 'bg-yellow-100 text-yellow-800',
   'MC':               'bg-teal-100 text-teal-800',
   'Wardrobe':         'bg-indigo-100 text-indigo-800',
-  'Makeup':           'bg-fuchsia-100 text-fuchsia-800',
-  'Others':           'bg-gray-100 text-gray-700',
+  'Makeup':                    'bg-fuchsia-100 text-fuchsia-800',
+  'Event Management (in-house)': 'bg-cyan-100 text-cyan-800',
+  'Others':                    'bg-gray-100 text-gray-700',
 }
