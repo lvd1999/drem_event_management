@@ -57,10 +57,10 @@ export default function EventItemForm({ open, onOpenChange, eventId, item }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
           <div className="space-y-1.5">
             <Label>Vendor</Label>
-            <Select value={vendorId} onValueChange={handleVendorChange}>
+            <Select value={vendorId || '__none__'} onValueChange={v => handleVendorChange(v === '__none__' ? '' : v)}>
               <SelectTrigger><SelectValue placeholder="Select vendor (optional)" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">— No vendor —</SelectItem>
+                <SelectItem value="__none__">— No vendor —</SelectItem>
                 {vendors?.map(v => <SelectItem key={v.id} value={v.id}>{v.name} ({v.category})</SelectItem>)}
               </SelectContent>
             </Select>

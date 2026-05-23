@@ -114,10 +114,10 @@ export default function EventForm({ open, onOpenChange, event }) {
             {role === 'admin' && (
               <div className="space-y-1.5">
                 <Label>Assigned To</Label>
-                <Select value={assignedTo} onValueChange={v => setValue('assignedTo', v)}>
+                <Select value={assignedTo || '__none__'} onValueChange={v => setValue('assignedTo', v === '__none__' ? '' : v)}>
                   <SelectTrigger><SelectValue placeholder="Select executive" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">— Unassigned —</SelectItem>
+                    <SelectItem value="__none__">— Unassigned —</SelectItem>
                     {profiles?.map(p => <SelectItem key={p.id} value={p.id}>{p.fullName}</SelectItem>)}
                   </SelectContent>
                 </Select>
