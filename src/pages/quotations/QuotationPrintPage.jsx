@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { doc, getDoc, collection, getDocs, orderBy, query } from 'firebase/firestore'
@@ -35,6 +36,13 @@ export default function QuotationPrintPage() {
     },
   })
 
+  useEffect(() => {
+    if (!data?.quotation?.quotationNo) return
+    const prev = document.title
+    document.title = data.quotation.quotationNo
+    return () => { document.title = prev }
+  }, [data?.quotation?.quotationNo])
+
   if (isLoading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" /></div>
   if (!data?.quotation) return <p className="p-8 text-muted-foreground">Quotation not found.</p>
 
@@ -47,7 +55,7 @@ export default function QuotationPrintPage() {
 
   return (
     <>
-      <style>{`@media print { .no-print { display: none !important; } @page { margin: 20mm; } }`}</style>
+      <style>{`@media print { .no-print { display: none !important; } @page { margin: 0; } thead { display: table-row-group; } }`}</style>
 
       {/* Print button */}
       <div className="no-print fixed top-4 right-4 z-10">
@@ -57,7 +65,7 @@ export default function QuotationPrintPage() {
       </div>
 
       {/* A4 content */}
-      <div className="max-w-3xl mx-auto px-8 py-10 print:px-0 print:py-0 font-sans text-sm text-gray-800">
+      <div className="max-w-3xl mx-auto px-8 py-10 font-sans text-sm text-gray-800">
 
         {/* Letterhead */}
         <div className="flex items-start justify-between mb-8">
@@ -94,6 +102,7 @@ export default function QuotationPrintPage() {
         <table className="w-full mb-6 text-sm">
           <thead>
             <tr className="border-b-2 border-gray-300">
+              <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide w-6">#</th>
               <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</th>
               <th className="text-right py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide w-14">Qty</th>
               <th className="text-right py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">Unit Price</th>
@@ -103,6 +112,7 @@ export default function QuotationPrintPage() {
           <tbody>
             {items.map((item, i) => (
               <tr key={item.id} className={i % 2 === 0 ? '' : 'bg-gray-50'}>
+                <td className="py-2 pr-3 text-gray-400 align-top">{i + 1}</td>
                 <td className="py-2 pr-4">
                   <span>{item.description}</span>
                   {item.notes && (

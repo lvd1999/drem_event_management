@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Pencil, Trash2, ExternalLink } from 'lucide-react'
@@ -10,6 +10,7 @@ import EmptyState from '@/components/common/EmptyState'
 
 export default function ClientTable({ clients, onEdit }) {
   const { role } = useAuth()
+  const navigate = useNavigate()
   const deleteClient = useDeleteClient()
   const [confirmId, setConfirmId] = useState(null)
 
@@ -30,12 +31,13 @@ export default function ClientTable({ clients, onEdit }) {
           </TableHeader>
           <TableBody>
             {clients.map(client => (
-              <TableRow key={client.id}>
+              <TableRow key={client.id} className="cursor-pointer" onClick={() => navigate(`/clients/${client.id}`)}>
+
                 <TableCell className="font-medium">{client.name}</TableCell>
                 <TableCell>{client.phone || '—'}</TableCell>
                 <TableCell>{client.email || '—'}</TableCell>
                 <TableCell className="max-w-xs truncate">{client.address || '—'}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">
                     <Button asChild variant="ghost" size="icon">
                       <Link to={`/clients/${client.id}`}><ExternalLink size={15} /></Link>

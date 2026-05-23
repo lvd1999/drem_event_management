@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { doc, getDoc, collection, getDocs, query, where, orderBy } from 'firebase/firestore'
+import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import PageHeader from '@/components/common/PageHeader'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
@@ -29,9 +29,15 @@ export default function ClientDetailPage() {
     queryKey: ['events', 'byClient', id],
     queryFn: async () => {
       const snap = await getDocs(
-        query(collection(db, 'events'), where('clientId', '==', id), orderBy('eventDate', 'desc'))
+        query(collection(db, 'events'), where('clientId', '==', id))
       )
-      return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      return snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => {
+          const aMs = a.eventDate?.toMillis?.() ?? new Date(a.eventDate ?? 0).getTime()
+          const bMs = b.eventDate?.toMillis?.() ?? new Date(b.eventDate ?? 0).getTime()
+          return bMs - aMs
+        })
     },
   })
 
