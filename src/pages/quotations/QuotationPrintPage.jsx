@@ -55,6 +55,13 @@ export default function QuotationPrintPage() {
         {/* Letterhead */}
         <div className="flex items-start justify-between mb-8">
           <div>
+            {settings?.logoUrl && (
+              <img
+                src={settings.logoUrl}
+                alt="Company logo"
+                className="h-16 w-auto object-contain mb-2"
+              />
+            )}
             <h1 className="text-2xl font-bold text-gray-900">{settings?.companyName}</h1>
             {settings?.tagline && <p className="text-xs text-gray-500 mt-0.5">{settings.tagline}</p>}
             {settings?.email  && <p className="text-xs text-gray-500">{settings.email}</p>}
