@@ -30,7 +30,6 @@ function useStats() {
           collection(db, 'events'),
           where('eventDate', '>=', startOfDay(today)),
           where('eventDate', '<=', endOfDay(thirtyDaysLater)),
-          where('status', '==', 'upcoming'),
         )),
         getDocs(query(
           collection(db, 'events'),
@@ -41,7 +40,7 @@ function useStats() {
       return {
         clients: clients.size,
         vendors: vendors.size,
-        upcoming: upcoming.size,
+        upcoming: upcoming.docs.filter(d => d.data().status === 'upcoming').length,
         thisMonth: thisMonth.size,
       }
     },
