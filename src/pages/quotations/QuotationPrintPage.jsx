@@ -8,6 +8,13 @@ import { Button } from '@/components/ui/button'
 import { formatRM, formatDate } from '@/lib/utils'
 import { Printer } from 'lucide-react'
 
+function renderNotesLine(text) {
+  const parts = text.split(/\*\*(.*?)\*\*/g)
+  return parts.map((part, i) =>
+    i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+  )
+}
+
 export default function QuotationPrintPage() {
   const { eventId, quotationId } = useParams()
 
@@ -100,9 +107,11 @@ export default function QuotationPrintPage() {
                   <span>{item.description}</span>
                   {item.notes && (
                     <div className="mt-1">
-                      {item.notes.split('\n').filter(Boolean).map((line, idx) => (
-                        <p key={idx} className="text-xs text-gray-400 leading-snug">{line}</p>
-                      ))}
+                      {item.notes.split('\n').map((line, idx) =>
+                        line
+                          ? <p key={idx} className="text-xs text-gray-400 leading-snug">{renderNotesLine(line)}</p>
+                          : <p key={idx} className="h-2" />
+                      )}
                     </div>
                   )}
                 </td>

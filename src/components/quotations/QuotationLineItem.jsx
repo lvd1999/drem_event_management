@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Trash2, Check } from 'lucide-react'
 import { formatRM } from '@/lib/utils'
@@ -22,7 +23,7 @@ export default function QuotationLineItem({ item, onSave, onDelete, isSaving }) 
     <tr>
       <td className="px-3 py-2">
         <Input {...register('description')} className="h-8 text-sm" />
-        <Input {...register('notes')} className="h-7 text-xs text-muted-foreground mt-1" placeholder="Notes (optional)" />
+        <Textarea {...register('notes')} rows={2} className="text-xs text-muted-foreground mt-1 resize-none" placeholder="Notes (optional)" />
       </td>
       <td className="px-3 py-2 w-20">
         <Input type="number" step="0.01" min="0" {...register('quantity')} className="h-8 text-sm text-right" />

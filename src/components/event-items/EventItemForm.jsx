@@ -83,7 +83,8 @@ export default function EventItemForm({ open, onOpenChange, eventId, item }) {
           </div>
           <div className="space-y-1.5">
             <Label>Notes</Label>
-            <Textarea rows={2} {...register('notes')} />
+            <Textarea rows={4} {...register('notes')} />
+            <p className="text-xs text-muted-foreground">Use **word** to make text bold. Empty lines are preserved.</p>
           </div>
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>Cancel</Button>
