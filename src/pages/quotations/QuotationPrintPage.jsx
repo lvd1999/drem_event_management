@@ -99,7 +99,11 @@ export default function QuotationPrintPage() {
                 <td className="py-2 pr-4">
                   <span>{item.description}</span>
                   {item.notes && (
-                    <p className="text-xs text-gray-400 mt-0.5 whitespace-pre-wrap">{item.notes}</p>
+                    <div className="mt-1">
+                      {item.notes.split('\n').filter(Boolean).map((line, idx) => (
+                        <p key={idx} className="text-xs text-gray-400 leading-snug">{line}</p>
+                      ))}
+                    </div>
                   )}
                 </td>
                 <td className="py-2 text-right">{item.quantity}</td>
