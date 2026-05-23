@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Pencil, Trash2 } from 'lucide-react'
@@ -10,6 +11,7 @@ import EmptyState from '@/components/common/EmptyState'
 
 export default function VendorTable({ vendors, onEdit }) {
   const { role } = useAuth()
+  const navigate = useNavigate()
   const deleteVendor = useDeleteVendor()
   const [confirmId, setConfirmId] = useState(null)
 
@@ -31,13 +33,13 @@ export default function VendorTable({ vendors, onEdit }) {
           </TableHeader>
           <TableBody>
             {vendors.map(v => (
-              <TableRow key={v.id}>
+              <TableRow key={v.id} className="cursor-pointer" onClick={() => navigate(`/vendors/${v.id}`)}>
                 <TableCell className="font-medium">{v.name}</TableCell>
                 <TableCell><VendorCategoryBadge category={v.category} /></TableCell>
                 <TableCell>{v.phone || '—'}</TableCell>
                 <TableCell>{v.email || '—'}</TableCell>
                 <TableCell>{v.contact || '—'}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">
                     <Button variant="ghost" size="icon" onClick={() => onEdit(v)}>
                       <Pencil size={15} />

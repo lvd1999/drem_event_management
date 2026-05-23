@@ -72,8 +72,9 @@ export default function QuotationPrintPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{settings?.companyName}</h1>
             {settings?.tagline && <p className="text-xs text-gray-500 mt-0.5">{settings.tagline}</p>}
-            {settings?.email  && <p className="text-xs text-gray-500">{settings.email}</p>}
-            {settings?.phone  && <p className="text-xs text-gray-500">{settings.phone}</p>}
+            {settings?.email       && <p className="text-xs text-gray-500">{settings.email}</p>}
+            {settings?.phone       && <p className="text-xs text-gray-500">{settings.phone}</p>}
+            {settings?.companyRegNo && <p className="text-xs text-gray-500">Reg. No: {settings.companyRegNo}</p>}
           </div>
           <div className="text-right">
             <p className="text-lg font-semibold text-gray-900">{settings?.documentTitle}</p>

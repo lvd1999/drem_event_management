@@ -51,6 +51,10 @@ export default function SettingsPage() {
                 <Input {...register('phone')} placeholder="e.g. +60 12-345 6789" />
               </div>
             </div>
+            <div className="space-y-1.5">
+              <Label>Company Registration No.</Label>
+              <Input {...register('companyRegNo')} placeholder="e.g. 1234567-A" />
+            </div>
           </CardContent>
         </Card>
 

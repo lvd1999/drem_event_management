@@ -14,7 +14,11 @@ import EventForm from '@/components/events/EventForm'
 import EventItemsTable from '@/components/event-items/EventItemsTable'
 import ChecklistPanel from '@/components/checklist/ChecklistPanel'
 import QuotationForm from '@/components/quotations/QuotationForm'
+import TransactionsSummary from '@/components/transactions/TransactionsSummary'
+import TransactionsTable from '@/components/transactions/TransactionsTable'
 import { useEventItems } from '@/hooks/useEventItems'
+import { useTransactions } from '@/hooks/useTransactions'
+import { useQuotation } from '@/hooks/useQuotations'
 import { formatDate } from '@/lib/utils'
 
 export default function EventDetailPage() {
@@ -30,6 +34,8 @@ export default function EventDetailPage() {
   })
 
   const { data: eventItems } = useEventItems(id)
+  const { data: transactions } = useTransactions(id)
+  const { data: quotation } = useQuotation(id)
 
   if (isLoading) return <div className="flex justify-center py-16"><LoadingSpinner size="lg" /></div>
   if (!event) return <p className="text-muted-foreground">Event not found.</p>
@@ -57,6 +63,7 @@ export default function EventDetailPage() {
           <TabsTrigger value="items">Items</TabsTrigger>
           <TabsTrigger value="checklist">Checklist</TabsTrigger>
           <TabsTrigger value="quotation">Quotation</TabsTrigger>
+          <TabsTrigger value="finance">Finance</TabsTrigger>
         </TabsList>
 
         {/* Tab 1: Event Info */}
@@ -106,6 +113,12 @@ export default function EventDetailPage() {
         {/* Tab 4: Quotation */}
         <TabsContent value="quotation">
           <QuotationForm eventId={id} eventItems={eventItems} />
+        </TabsContent>
+
+        {/* Tab 5: Finance */}
+        <TabsContent value="finance">
+          <TransactionsSummary transactions={transactions} quotation={quotation} />
+          <TransactionsTable eventId={id} />
         </TabsContent>
       </Tabs>
 

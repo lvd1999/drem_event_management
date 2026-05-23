@@ -9,6 +9,7 @@ import DashboardPage from '@/pages/dashboard/DashboardPage'
 import ClientsPage from '@/pages/clients/ClientsPage'
 import ClientDetailPage from '@/pages/clients/ClientDetailPage'
 import VendorsPage from '@/pages/vendors/VendorsPage'
+import VendorDetailPage from '@/pages/vendors/VendorDetailPage'
 import EventsPage from '@/pages/events/EventsPage'
 import EventDetailPage from '@/pages/events/EventDetailPage'
 import QuotationPrintPage from '@/pages/quotations/QuotationPrintPage'
@@ -32,6 +33,7 @@ export default function App() {
                 <Route path="/clients"     element={<ClientsPage />} />
                 <Route path="/clients/:id" element={<ClientDetailPage />} />
                 <Route path="/vendors"     element={<VendorsPage />} />
+                <Route path="/vendors/:id" element={<VendorDetailPage />} />
                 <Route path="/events"      element={<EventsPage />} />
                 <Route path="/events/:id"  element={<EventDetailPage />} />
                 <Route path="/settings"    element={<SettingsPage />} />
