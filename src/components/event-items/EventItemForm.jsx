@@ -20,11 +20,12 @@ export default function EventItemForm({ open, onOpenChange, eventId, item }) {
   const vendorId = watch('vendorId')
 
   useEffect(() => {
+    if (!open) return
     reset(item
       ? { vendorId: item.vendorId ?? '', description: item.description, category: item.category ?? '', quantity: item.quantity, unitPrice: item.unitPrice, notes: item.notes ?? '' }
       : { vendorId: '', description: '', category: '', quantity: 1, unitPrice: 0, notes: '' }
     )
-  }, [item, reset])
+  }, [open, item, reset])
 
   function handleVendorChange(id) {
     setValue('vendorId', id)
