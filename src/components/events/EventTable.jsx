@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Pencil, Trash2, ExternalLink } from 'lucide-react'
@@ -13,6 +13,7 @@ import { formatDate } from '@/lib/utils'
 export default function EventTable({ events, onEdit }) {
   const { role } = useAuth()
   const deleteEvent = useDeleteEvent()
+  const navigate = useNavigate()
   const [confirmId, setConfirmId] = useState(null)
 
   if (!events?.length) return <EmptyState title="No events found" description="Adjust filters or add a new event." />
@@ -33,17 +34,18 @@ export default function EventTable({ events, onEdit }) {
           </TableHeader>
           <TableBody>
             {events.map(ev => (
-              <TableRow key={ev.id}>
+              <TableRow
+                key={ev.id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => navigate(`/events/${ev.id}`)}
+              >
                 <TableCell className="font-medium">{ev.title}</TableCell>
                 <TableCell>{ev.clientName || '—'}</TableCell>
                 <TableCell className="whitespace-nowrap">{formatDate(ev.eventDate)}</TableCell>
                 <TableCell className="max-w-xs truncate">{ev.venue || '—'}</TableCell>
                 <TableCell><EventStatusBadge status={ev.status} /></TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">
-                    <Button asChild variant="ghost" size="icon">
-                      <Link to={`/events/${ev.id}`}><ExternalLink size={15} /></Link>
-                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => onEdit(ev)}>
                       <Pencil size={15} />
                     </Button>
