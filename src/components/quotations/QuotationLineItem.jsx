@@ -7,7 +7,7 @@ import { Trash2, Check } from 'lucide-react'
 import { formatRM } from '@/lib/utils'
 
 export default function QuotationLineItem({ item, onSave, onDelete, isSaving }) {
-  const { register, handleSubmit, watch, reset } = useForm({
+  const { register, handleSubmit, watch, reset, setValue } = useForm({
     defaultValues: { description: item.description, quantity: item.quantity, unitPrice: item.unitPrice, notes: item.notes ?? '' },
   })
 
@@ -18,12 +18,28 @@ export default function QuotationLineItem({ item, onSave, onDelete, isSaving }) 
   const qty = Number(watch('quantity') || 0)
   const price = Number(watch('unitPrice') || 0)
   const total = qty * price
+  const notesValue = watch('notes', '')
+
+  function handleNotesKeyDown(e) {
+    if (!(e.metaKey || e.ctrlKey) || e.key !== 'b') return
+    e.preventDefault()
+    const el = e.currentTarget
+    const { selectionStart: start, selectionEnd: end } = el
+    const current = notesValue ?? ''
+    const selected = current.slice(start, end)
+    const next = current.slice(0, start) + '**' + selected + '**' + current.slice(end)
+    setValue('notes', next, { shouldDirty: true })
+    requestAnimationFrame(() => {
+      const cursor = selected ? end + 4 : start + 2
+      el.setSelectionRange(cursor, cursor)
+    })
+  }
 
   return (
     <tr>
       <td className="px-3 py-2">
         <Input {...register('description')} className="h-8 text-sm" />
-        <Textarea {...register('notes')} rows={2} className="text-xs text-muted-foreground mt-1 resize-none" placeholder="Notes (optional)" />
+        <Textarea {...register('notes')} rows={2} className="text-xs text-muted-foreground mt-1 resize-none" placeholder="Notes (optional)" onKeyDown={handleNotesKeyDown} />
       </td>
       <td className="px-3 py-2 w-20">
         <Input type="number" step="0.01" min="0" {...register('quantity')} className="h-8 text-sm text-right" />

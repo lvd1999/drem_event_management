@@ -18,6 +18,22 @@ export default function EventItemForm({ open, onOpenChange, eventId, item }) {
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm()
   const vendorId = watch('vendorId')
+  const notesValue = watch('notes', '')
+
+  function handleNotesKeyDown(e) {
+    if (!(e.metaKey || e.ctrlKey) || e.key !== 'b') return
+    e.preventDefault()
+    const el = e.currentTarget
+    const { selectionStart: start, selectionEnd: end } = el
+    const current = notesValue ?? ''
+    const selected = current.slice(start, end)
+    const next = current.slice(0, start) + '**' + selected + '**' + current.slice(end)
+    setValue('notes', next, { shouldDirty: true })
+    requestAnimationFrame(() => {
+      const cursor = selected ? end + 4 : start + 2
+      el.setSelectionRange(cursor, cursor)
+    })
+  }
 
   useEffect(() => {
     if (!open) return
@@ -83,8 +99,8 @@ export default function EventItemForm({ open, onOpenChange, eventId, item }) {
           </div>
           <div className="space-y-1.5">
             <Label>Notes</Label>
-            <Textarea rows={4} {...register('notes')} />
-            <p className="text-xs text-muted-foreground">Use **word** to make text bold. Empty lines are preserved.</p>
+            <Textarea rows={4} {...register('notes')} onKeyDown={handleNotesKeyDown} />
+            <p className="text-xs text-muted-foreground">Select text then Cmd+B (Mac) / Ctrl+B (Windows) to bold. Empty lines are preserved.</p>
           </div>
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>Cancel</Button>
