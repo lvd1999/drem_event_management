@@ -7,11 +7,11 @@ import { formatRM } from '@/lib/utils'
 
 export default function QuotationLineItem({ item, onSave, onDelete, isSaving }) {
   const { register, handleSubmit, watch, reset } = useForm({
-    defaultValues: { description: item.description, quantity: item.quantity, unitPrice: item.unitPrice },
+    defaultValues: { description: item.description, quantity: item.quantity, unitPrice: item.unitPrice, notes: item.notes ?? '' },
   })
 
   useEffect(() => {
-    reset({ description: item.description, quantity: item.quantity, unitPrice: item.unitPrice })
+    reset({ description: item.description, quantity: item.quantity, unitPrice: item.unitPrice, notes: item.notes ?? '' })
   }, [item, reset])
 
   const qty = Number(watch('quantity') || 0)
@@ -22,6 +22,7 @@ export default function QuotationLineItem({ item, onSave, onDelete, isSaving }) 
     <tr>
       <td className="px-3 py-2">
         <Input {...register('description')} className="h-8 text-sm" />
+        <Input {...register('notes')} className="h-7 text-xs text-muted-foreground mt-1" placeholder="Notes (optional)" />
       </td>
       <td className="px-3 py-2 w-20">
         <Input type="number" step="0.01" min="0" {...register('quantity')} className="h-8 text-sm text-right" />

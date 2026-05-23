@@ -66,6 +66,7 @@ export function useGenerateQuotation(eventId) {
           quantity: item.quantity ?? 1,
           unitPrice: item.unitPrice ?? 0,
           totalPrice: (item.quantity ?? 1) * (item.unitPrice ?? 0),
+          notes: item.notes ?? '',
           sortOrder: i,
         })
       }
@@ -137,6 +138,7 @@ export function useResyncQuotationItems(eventId, quotationId) {
           quantity: item.quantity ?? 1,
           unitPrice: item.unitPrice ?? 0,
           totalPrice: (item.quantity ?? 1) * (item.unitPrice ?? 0),
+          notes: item.notes ?? '',
           sortOrder: i,
         })
       }

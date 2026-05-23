@@ -96,7 +96,12 @@ export default function QuotationPrintPage() {
           <tbody>
             {items.map((item, i) => (
               <tr key={item.id} className={i % 2 === 0 ? '' : 'bg-gray-50'}>
-                <td className="py-2 pr-4">{item.description}</td>
+                <td className="py-2 pr-4">
+                  <span>{item.description}</span>
+                  {item.notes && (
+                    <p className="text-xs text-gray-400 mt-0.5 whitespace-pre-wrap">{item.notes}</p>
+                  )}
+                </td>
                 <td className="py-2 text-right">{item.quantity}</td>
                 <td className="py-2 text-right">{formatRM(item.unitPrice)}</td>
                 <td className="py-2 text-right font-medium">{formatRM(item.totalPrice)}</td>
