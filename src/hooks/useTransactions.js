@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   collection, getDocs, addDoc, updateDoc, deleteDoc,
-  doc, orderBy, query, serverTimestamp,
+  doc, orderBy, query, serverTimestamp, arrayUnion, arrayRemove,
 } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
+import { db, storage } from '@/lib/firebase'
 import { toast } from 'sonner'
 
 function txCol(eventId) {
@@ -27,6 +28,7 @@ export function useAddTransaction(eventId) {
     mutationFn: (data) =>
       addDoc(txCol(eventId), {
         ...data,
+        attachments: [],
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       }),
@@ -54,5 +56,38 @@ export function useDeleteTransaction(eventId) {
     mutationFn: (id) => deleteDoc(doc(db, 'events', eventId, 'transactions', id)),
     onSuccess: () => { qc.invalidateQueries(['transactions', eventId]); toast.success('Transaction deleted.') },
     onError: () => toast.error('Failed to delete transaction.'),
+  })
+}
+
+export function useUploadTransactionFile(eventId) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ transactionId, file }) => {
+      const path = `events/${eventId}/transactions/${transactionId}/${file.name}`
+      const storageRef = ref(storage, path)
+      await uploadBytes(storageRef, file)
+      const url = await getDownloadURL(storageRef)
+      await updateDoc(doc(db, 'events', eventId, 'transactions', transactionId), {
+        attachments: arrayUnion({ name: file.name, url, path }),
+        updatedAt: serverTimestamp(),
+      })
+    },
+    onSuccess: () => qc.invalidateQueries(['transactions', eventId]),
+    onError: (err) => { console.error('[upload file]', err); toast.error(`Upload failed: ${err?.message ?? err}`) },
+  })
+}
+
+export function useDeleteTransactionFile(eventId) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ transactionId, attachment }) => {
+      await deleteObject(ref(storage, attachment.path))
+      await updateDoc(doc(db, 'events', eventId, 'transactions', transactionId), {
+        attachments: arrayRemove(attachment),
+        updatedAt: serverTimestamp(),
+      })
+    },
+    onSuccess: () => qc.invalidateQueries(['transactions', eventId]),
+    onError: (err) => { console.error('[delete file]', err); toast.error(`Delete failed: ${err?.message ?? err}`) },
   })
 }

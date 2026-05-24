@@ -1,12 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Paperclip, X } from 'lucide-react'
 import { useVendors } from '@/hooks/useVendors'
-import { useAddTransaction, useUpdateTransaction } from '@/hooks/useTransactions'
+import {
+  useAddTransaction, useUpdateTransaction,
+  useUploadTransactionFile, useDeleteTransactionFile,
+} from '@/hooks/useTransactions'
 import { Timestamp } from 'firebase/firestore'
 
 const PAYMENT_METHODS = ['Bank Transfer', 'Cash', 'GrabPay', 'Cheque', 'Other']
@@ -21,8 +25,13 @@ export default function TransactionForm({ open, onOpenChange, eventId, transacti
   const isEdit = Boolean(transaction)
   const add = useAddTransaction(eventId)
   const update = useUpdateTransaction(eventId)
-  const loading = add.isPending || update.isPending
+  const uploadFile = useUploadTransactionFile(eventId)
+  const deleteFile = useDeleteTransactionFile(eventId)
+  const loading = add.isPending || update.isPending || uploadFile.isPending || deleteFile.isPending
   const { data: vendors } = useVendors()
+
+  const [pendingFiles, setPendingFiles] = useState([])
+  const fileInputRef = useRef(null)
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm()
   const type = watch('type', 'in')
@@ -30,6 +39,7 @@ export default function TransactionForm({ open, onOpenChange, eventId, transacti
 
   useEffect(() => {
     if (!open) return
+    setPendingFiles([])
     reset(transaction
       ? {
           type: transaction.type,
@@ -50,6 +60,16 @@ export default function TransactionForm({ open, onOpenChange, eventId, transacti
     )
   }, [open, transaction, reset])
 
+  function handleFileChange(e) {
+    const files = Array.from(e.target.files)
+    setPendingFiles(prev => [...prev, ...files])
+    e.target.value = ''
+  }
+
+  function removePending(index) {
+    setPendingFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
   async function onSubmit(data) {
     const vendor = vendors?.find(v => v.id === data.vendorId)
     const payload = {
@@ -61,10 +81,28 @@ export default function TransactionForm({ open, onOpenChange, eventId, transacti
       vendorId: data.type === 'out' ? (data.vendorId || '') : '',
       vendorName: data.type === 'out' ? (vendor?.name ?? '') : '',
     }
-    if (isEdit) await update.mutateAsync({ id: transaction.id, ...payload })
-    else await add.mutateAsync(payload)
-    onOpenChange(false)
+
+    try {
+      let transactionId
+      if (isEdit) {
+        await update.mutateAsync({ id: transaction.id, ...payload })
+        transactionId = transaction.id
+      } else {
+        const docRef = await add.mutateAsync(payload)
+        transactionId = docRef.id
+      }
+
+      for (const file of pendingFiles) {
+        await uploadFile.mutateAsync({ transactionId, file })
+      }
+
+      onOpenChange(false)
+    } catch (err) {
+      console.error('[TransactionForm submit]', err)
+    }
   }
+
+  const existingAttachments = transaction?.attachments ?? []
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -143,6 +181,64 @@ export default function TransactionForm({ open, onOpenChange, eventId, transacti
               <Label>Reference</Label>
               <Input placeholder="e.g. TT ref, cheque no." {...register('reference')} />
             </div>
+          </div>
+
+          {/* Attachments */}
+          <div className="space-y-1.5">
+            <Label>Attachments</Label>
+
+            {/* Existing attachments (edit mode) */}
+            {existingAttachments.length > 0 && (
+              <ul className="space-y-1 mb-1">
+                {existingAttachments.map((att) => (
+                  <li key={att.path} className="flex items-center gap-2 text-sm">
+                    <Paperclip size={12} className="text-muted-foreground shrink-0" />
+                    <a href={att.url} target="_blank" rel="noreferrer" className="truncate text-blue-600 hover:underline flex-1">{att.name}</a>
+                    <button
+                      type="button"
+                      disabled={deleteFile.isPending}
+                      onClick={() => deleteFile.mutate({ transactionId: transaction.id, attachment: att })}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <X size={13} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Pending files (not yet uploaded) */}
+            {pendingFiles.length > 0 && (
+              <ul className="space-y-1 mb-1">
+                {pendingFiles.map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Paperclip size={12} className="shrink-0" />
+                    <span className="truncate flex-1">{f.name}</span>
+                    <button type="button" onClick={() => removePending(i)} className="hover:text-destructive">
+                      <X size={13} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,application/pdf"
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Paperclip size={13} className="mr-1.5" /> Attach file
+            </Button>
+            <p className="text-xs text-muted-foreground">PDF or image. Files upload when you save.</p>
           </div>
 
           <div className="flex justify-end gap-2 pt-1">

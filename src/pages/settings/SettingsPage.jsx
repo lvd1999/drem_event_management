@@ -58,6 +58,29 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Payment Details */}
+        <Card>
+          <CardContent className="pt-5 space-y-4">
+            <p className="text-sm font-semibold text-foreground">Payment Details</p>
+            <Separator />
+            <p className="text-xs text-muted-foreground">Printed on quotations below the Balance Due section so clients know where to transfer.</p>
+            <div className="space-y-1.5">
+              <Label>Bank Name</Label>
+              <Input {...register('bankName')} placeholder="e.g. Maybank" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Account Number</Label>
+                <Input {...register('bankAccount')} placeholder="e.g. 1234 5678 9012" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Account Holder Name</Label>
+                <Input {...register('bankHolder')} placeholder="e.g. Dokoh Ratna Sdn Bhd" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Quotation Document */}
         <Card>
           <CardContent className="pt-5 space-y-4">

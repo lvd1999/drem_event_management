@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { doc, getDoc, collection, getDocs, orderBy, query } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
@@ -7,7 +7,7 @@ import { useSettings } from '@/hooks/useSettings'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRM, formatDate } from '@/lib/utils'
-import { Printer } from 'lucide-react'
+import { Printer, ArrowLeft } from 'lucide-react'
 
 function renderNotesLine(text) {
   const parts = text.split(/\*\*(.*?)\*\*/g)
@@ -57,8 +57,11 @@ export default function QuotationPrintPage() {
     <>
       <style>{`@media print { .no-print { display: none !important; } @page { margin: 0; } thead { display: table-row-group; } }`}</style>
 
-      {/* Print button */}
-      <div className="no-print fixed top-4 right-4 z-10">
+      {/* Toolbar — screen only */}
+      <div className="no-print fixed top-4 left-0 right-0 z-10 flex items-center justify-between px-6">
+        <Button asChild variant="outline" size="sm">
+          <Link to={`/events/${eventId}`}><ArrowLeft size={14} className="mr-1.5" /> Back to Event</Link>
+        </Button>
         <Button onClick={() => window.print()}>
           <Printer size={15} className="mr-1.5" /> Print / Save PDF
         </Button>
@@ -163,6 +166,18 @@ export default function QuotationPrintPage() {
             </div>
           </div>
         </div>
+
+        {/* Payment info */}
+        {(settings?.bankName || settings?.bankAccount) && (
+          <div className="mb-8 rounded-md border border-gray-200 p-4 bg-gray-50">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Payment Details</p>
+            <div className="text-sm space-y-0.5">
+              {settings.bankName    && <p><span className="text-gray-500">Bank: </span>{settings.bankName}</p>}
+              {settings.bankAccount && <p><span className="text-gray-500">Account No: </span>{settings.bankAccount}</p>}
+              {settings.bankHolder  && <p><span className="text-gray-500">Account Name: </span>{settings.bankHolder}</p>}
+            </div>
+          </div>
+        )}
 
         {/* Notes */}
         {quotation.notes && (

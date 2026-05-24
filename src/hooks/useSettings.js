@@ -14,6 +14,9 @@ export const SETTINGS_DEFAULTS = {
   documentTitle: 'QUOTATION',
   termsText:     '50% deposit required to confirm booking.\nBalance to be paid 7 days before the event date.\nThis quotation is valid for 14 days from the issued date.\nAll prices are inclusive of applicable taxes.',
   footerText:    'Thank you for choosing Dokoh Ratna. We look forward to making your event a success.',
+  bankName:      '',
+  bankAccount:   '',
+  bankHolder:    '',
 }
 
 export function useSettings() {

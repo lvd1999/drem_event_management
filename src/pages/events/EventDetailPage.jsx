@@ -19,7 +19,7 @@ import TransactionsTable from '@/components/transactions/TransactionsTable'
 import { useEventItems } from '@/hooks/useEventItems'
 import { useTransactions } from '@/hooks/useTransactions'
 import { useQuotation } from '@/hooks/useQuotations'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatRM } from '@/lib/utils'
 
 export default function EventDetailPage() {
   const { id } = useParams()
@@ -98,6 +98,9 @@ export default function EventDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Finance snapshot */}
+          <FinanceSnapshot transactions={transactions} quotation={quotation} />
         </TabsContent>
 
         {/* Tab 2: Items */}
@@ -123,6 +126,43 @@ export default function EventDetailPage() {
       </Tabs>
 
       <EventForm open={editOpen} onOpenChange={setEditOpen} event={event} />
+    </div>
+  )
+}
+
+function FinanceSnapshot({ transactions, quotation }) {
+  const totalIn = transactions?.filter(t => t.type === 'in').reduce((s, t) => s + (t.amount ?? 0), 0) ?? 0
+  const totalOut = transactions?.filter(t => t.type === 'out').reduce((s, t) => s + (t.amount ?? 0), 0) ?? 0
+  const net = totalIn - totalOut
+
+  if (!transactions?.length && !quotation) return null
+
+  const subtotal = quotation?.items?.reduce((s, i) => s + (i.totalPrice ?? 0), 0) ?? 0
+  const grandTotal = quotation ? subtotal - (quotation.discountAmount ?? 0) : null
+
+  return (
+    <div className="mt-4 rounded-lg border bg-white p-4">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Finance Snapshot</p>
+      <div className="flex flex-wrap gap-6 text-sm">
+        {grandTotal !== null && (
+          <div>
+            <p className="text-xs text-muted-foreground">Quoted</p>
+            <p className="font-semibold">{formatRM(grandTotal)}</p>
+          </div>
+        )}
+        <div>
+          <p className="text-xs text-muted-foreground">Received</p>
+          <p className="font-semibold text-green-700">{formatRM(totalIn)}</p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">Paid Out</p>
+          <p className="font-semibold text-red-700">{formatRM(totalOut)}</p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">Net Balance</p>
+          <p className={`font-bold ${net >= 0 ? 'text-green-700' : 'text-red-700'}`}>{formatRM(net)}</p>
+        </div>
+      </div>
     </div>
   )
 }
