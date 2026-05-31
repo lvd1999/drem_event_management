@@ -32,10 +32,10 @@ export default function EventItemsTable({ eventId, items }) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Description</TableHead>
-                  <TableHead>Vendor</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Qty</TableHead>
-                  <TableHead className="text-right">Unit Price</TableHead>
+                  <TableHead className="hidden sm:table-cell">Vendor</TableHead>
+                  <TableHead className="hidden md:table-cell">Category</TableHead>
+                  <TableHead className="hidden sm:table-cell text-right">Qty</TableHead>
+                  <TableHead className="hidden sm:table-cell text-right">Unit Price</TableHead>
                   <TableHead className="text-right">Total</TableHead>
                   <TableHead className="w-20 text-right">Actions</TableHead>
                 </TableRow>
@@ -44,10 +44,10 @@ export default function EventItemsTable({ eventId, items }) {
                 {items.map(item => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.description}</TableCell>
-                    <TableCell>{item.vendorName || '—'}</TableCell>
-                    <TableCell>{item.category ? <VendorCategoryBadge category={item.category} /> : '—'}</TableCell>
-                    <TableCell className="text-right">{item.quantity}</TableCell>
-                    <TableCell className="text-right">{formatRM(item.unitPrice)}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{item.vendorName || '—'}</TableCell>
+                    <TableCell className="hidden md:table-cell">{item.category ? <VendorCategoryBadge category={item.category} /> : '—'}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-right">{item.quantity}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-right">{formatRM(item.unitPrice)}</TableCell>
                     <TableCell className="text-right font-medium">{formatRM(item.totalPrice)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Pencil, Trash2, ExternalLink } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import EventStatusBadge from './EventStatusBadge'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import { useDeleteEvent } from '@/hooks/useEvents'
@@ -25,9 +25,9 @@ export default function EventTable({ events, onEdit }) {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Venue</TableHead>
+              <TableHead className="hidden sm:table-cell">Client</TableHead>
+              <TableHead className="hidden sm:table-cell">Date</TableHead>
+              <TableHead className="hidden md:table-cell">Venue</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="w-28 text-right">Actions</TableHead>
             </TableRow>
@@ -40,9 +40,9 @@ export default function EventTable({ events, onEdit }) {
                 onClick={() => navigate(`/events/${ev.id}`)}
               >
                 <TableCell className="font-medium">{ev.title}</TableCell>
-                <TableCell>{ev.clientName || '—'}</TableCell>
-                <TableCell className="whitespace-nowrap">{formatDate(ev.eventDate)}</TableCell>
-                <TableCell className="max-w-xs truncate">{ev.venue || '—'}</TableCell>
+                <TableCell className="hidden sm:table-cell">{ev.clientName || '—'}</TableCell>
+                <TableCell className="hidden sm:table-cell whitespace-nowrap">{formatDate(ev.eventDate)}</TableCell>
+                <TableCell className="hidden md:table-cell max-w-xs truncate">{ev.venue || '—'}</TableCell>
                 <TableCell><EventStatusBadge status={ev.status} /></TableCell>
                 <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">

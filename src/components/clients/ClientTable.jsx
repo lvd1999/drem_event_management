@@ -24,19 +24,18 @@ export default function ClientTable({ clients, onEdit }) {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Phone</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Address</TableHead>
+              <TableHead className="hidden sm:table-cell">Email</TableHead>
+              <TableHead className="hidden md:table-cell">Address</TableHead>
               <TableHead className="w-28 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {clients.map(client => (
               <TableRow key={client.id} className="cursor-pointer" onClick={() => navigate(`/clients/${client.id}`)}>
-
                 <TableCell className="font-medium">{client.name}</TableCell>
                 <TableCell>{client.phone || '—'}</TableCell>
-                <TableCell>{client.email || '—'}</TableCell>
-                <TableCell className="max-w-xs truncate">{client.address || '—'}</TableCell>
+                <TableCell className="hidden sm:table-cell">{client.email || '—'}</TableCell>
+                <TableCell className="hidden md:table-cell max-w-xs truncate">{client.address || '—'}</TableCell>
                 <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">
                     <Button asChild variant="ghost" size="icon">

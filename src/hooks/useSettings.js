@@ -34,7 +34,7 @@ export function useUpdateSettings() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (data) => setDoc(SETTINGS_REF, data, { merge: true }),
-    onSuccess: () => { qc.invalidateQueries(['settings']); toast.success('Settings saved.') },
-    onError: () => toast.error('Failed to save settings.'),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['settings'] }); toast.success('Settings saved.') },
+    onError: (err) => { console.error('Settings save failed:', err); toast.error('Failed to save settings.') },
   })
 }

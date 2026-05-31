@@ -25,9 +25,9 @@ export default function VendorTable({ vendors, onEdit }) {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Contact Person</TableHead>
+              <TableHead className="hidden sm:table-cell">Phone</TableHead>
+              <TableHead className="hidden md:table-cell">Email</TableHead>
+              <TableHead className="hidden md:table-cell">Contact Person</TableHead>
               <TableHead className="w-24 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -36,9 +36,9 @@ export default function VendorTable({ vendors, onEdit }) {
               <TableRow key={v.id} className="cursor-pointer" onClick={() => navigate(`/vendors/${v.id}`)}>
                 <TableCell className="font-medium">{v.name}</TableCell>
                 <TableCell><VendorCategoryBadge category={v.category} /></TableCell>
-                <TableCell>{v.phone || '—'}</TableCell>
-                <TableCell>{v.email || '—'}</TableCell>
-                <TableCell>{v.contact || '—'}</TableCell>
+                <TableCell className="hidden sm:table-cell">{v.phone || '—'}</TableCell>
+                <TableCell className="hidden md:table-cell">{v.email || '—'}</TableCell>
+                <TableCell className="hidden md:table-cell">{v.contact || '—'}</TableCell>
                 <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">
                     <Button variant="ghost" size="icon" onClick={() => onEdit(v)}>

@@ -119,10 +119,10 @@ export default function TransactionsTable({ eventId }) {
                   <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead>Vendor</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Attachments</TableHead>
+                    <TableHead className="hidden sm:table-cell">Vendor</TableHead>
+                    <TableHead className="hidden md:table-cell">Method</TableHead>
+                    <TableHead className="hidden md:table-cell">Reference</TableHead>
+                    <TableHead className="hidden lg:table-cell">Attachments</TableHead>
                     <TableHead className="text-right">Amount (RM)</TableHead>
                     <TableHead className="w-20 text-right">Actions</TableHead>
                   </TableRow>
@@ -137,10 +137,10 @@ export default function TransactionsTable({ eventId }) {
                           : <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800">OUT</span>
                         }
                       </TableCell>
-                      <TableCell className="text-sm">{tx.vendorName || '—'}</TableCell>
-                      <TableCell className="text-sm">{tx.method || '—'}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{tx.reference || '—'}</TableCell>
-                      <TableCell className="text-sm">
+                      <TableCell className="hidden sm:table-cell text-sm">{tx.vendorName || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm">{tx.method || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{tx.reference || '—'}</TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">
                         <AttachmentCell attachments={tx.attachments} />
                       </TableCell>
                       <TableCell className={`text-right font-semibold ${tx.type === 'in' ? 'text-green-700' : 'text-red-700'}`}>

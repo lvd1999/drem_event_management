@@ -12,7 +12,10 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
-export const db      = getFirestore(app)
-export const auth    = getAuth(app)
-export const storage = getStorage(app)
+const app          = initializeApp(firebaseConfig)
+const secondaryApp = initializeApp(firebaseConfig, 'Secondary')
+
+export const db            = getFirestore(app)
+export const auth          = getAuth(app)
+export const secondaryAuth = getAuth(secondaryApp)
+export const storage       = getStorage(app)
